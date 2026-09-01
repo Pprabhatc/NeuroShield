@@ -1,0 +1,30 @@
+# Node modules
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Production build outputs
+client/dist/
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Python caches and virtual environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+venv/
+.venv/
+env/
+ENV/
+
+# System and editor files
+.DS_Store
+Thumbs.db
+*.log

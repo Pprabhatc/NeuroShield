@@ -33,13 +33,15 @@ export const generateSecurityReport = (data, title = 'NeuroShield Security Incid
   doc.setTextColor(55, 65, 81);
 
   if (data.overall_risk || data.risk_level) {
-    const risk = data.overall_risk || data.risk_level || 'Medium';
+    const risk = data.overall_risk || data.risk_level || 'Low';
     doc.text(`Overall Threat Risk Rating: ${risk.toUpperCase()}`, 14, 58);
   }
 
-  if (data.scam_probability !== undefined) {
-    doc.text(`Scam Probability Score: ${data.scam_probability}%`, 14, 64);
-    doc.text(`Threat Category: ${data.category}`, 14, 70);
+  if (data.total_records !== undefined) {
+    doc.text(`Total Records Analyzed: ${data.total_records} | Malicious Flows Flagged: ${data.threats_detected || 0}`, 14, 64);
+    if (data.main_attack_category) {
+      doc.text(`Dominant Attack Category: ${data.main_attack_category}`, 14, 70);
+    }
   }
 
   if (data.explanation) {

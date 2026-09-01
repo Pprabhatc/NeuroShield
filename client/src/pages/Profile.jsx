@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Key, Shield, Lock, Activity, CheckCircle2, Copy, RefreshCw, Cpu, Award } from 'lucide-react';
+import { Key, Lock, Copy, RefreshCw, Cpu } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -38,7 +38,7 @@ export const Profile = () => {
 
   return (
     <div className="space-y-8 pb-16">
-      
+
       {/* Header */}
       <div>
         <div className="flex items-center gap-3">
@@ -52,7 +52,7 @@ export const Profile = () => {
 
       {/* User Information Card */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
+
         <div className="lg:col-span-4 glass-card rounded-2xl p-6 border border-gray-800 space-y-6 text-center">
           <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#00E5A8] to-[#4F8CFF] p-0.5 mx-auto shadow-xl shadow-[#00E5A8]/20">
             <div className="w-full h-full bg-[#0B1020] rounded-[14px] flex items-center justify-center font-extrabold text-2xl text-[#00E5A8]">
@@ -61,7 +61,7 @@ export const Profile = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-bold text-white">{user?.name || 'Cyber Threat Lead'}</h3>
+            <h3 className="text-lg font-bold text-white">{user?.name || 'Cyber Threat Analyst'}</h3>
             <p className="text-xs text-gray-400 font-mono mt-0.5">{user?.email || 'analyst@neuroshield.io'}</p>
             <span className="inline-block mt-3 px-3 py-1 rounded-full bg-[#4F8CFF]/10 text-[#4F8CFF] border border-[#4F8CFF]/30 font-mono text-xs font-semibold">
               {user?.role || 'Senior SOC Lead'}
@@ -82,13 +82,13 @@ export const Profile = () => {
           </div>
         </div>
 
-        {/* API Usage & Key Management */}
+        {/* API Key Management */}
         <div className="lg:col-span-8 space-y-6">
-          
+
           <div className="glass-card rounded-2xl p-6 border border-gray-800 space-y-4">
             <h3 className="text-base font-bold text-white flex items-center gap-2">
               <Key className="w-4 h-4 text-[#00E5A8]" />
-              Developer API Key & Rate Limits
+              Developer API Key & Quotas
             </h3>
 
             <div className="p-4 rounded-xl bg-gray-900/90 border border-gray-800 space-y-3">
@@ -110,32 +110,20 @@ export const Profile = () => {
                 <button
                   onClick={handleRegenerateKey}
                   className="p-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors"
+                  title="Regenerate API Key"
                 >
                   <RefreshCw className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            {/* Quota meters */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              <div className="p-4 rounded-xl bg-gray-900/60 border border-gray-800 space-y-2">
-                <div className="flex justify-between text-xs font-mono">
-                  <span className="text-gray-400">Monthly ML Request Quota</span>
-                  <span className="text-[#00E5A8]">4,280 / 10,000</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-gray-800 overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-[#00E5A8] to-[#4F8CFF] w-[42%]" />
-                </div>
+            <div className="p-4 rounded-xl bg-gray-900/60 border border-gray-800 space-y-2">
+              <div className="flex justify-between text-xs font-mono">
+                <span className="text-gray-400">Monthly IDS Scan Request Quota</span>
+                <span className="text-[#00E5A8]">4,280 / 10,000</span>
               </div>
-
-              <div className="p-4 rounded-xl bg-gray-900/60 border border-gray-800 space-y-2">
-                <div className="flex justify-between text-xs font-mono">
-                  <span className="text-gray-400">NLP TF-IDF Batch Quota</span>
-                  <span className="text-[#4F8CFF]">1,420 / 5,000</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-gray-800 overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-[#4F8CFF] to-[#A855F7] w-[28%]" />
-                </div>
+              <div className="w-full h-2 rounded-full bg-gray-800 overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-[#00E5A8] to-[#4F8CFF] w-[42%]" />
               </div>
             </div>
           </div>
@@ -144,7 +132,7 @@ export const Profile = () => {
           <div className="glass-card rounded-2xl p-6 border border-gray-800 space-y-4">
             <h3 className="text-base font-bold text-white flex items-center gap-2">
               <Lock className="w-4 h-4 text-[#FF4D6D]" />
-              Update Analyst Password
+              Update Credentials
             </h3>
 
             <form onSubmit={handlePasswordUpdate} className="space-y-4">

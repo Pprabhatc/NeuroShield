@@ -8,70 +8,101 @@ exports.predictIntrusion = async (req, res) => {
     let flaskRes;
 
     if (req.file) {
-      // Forward file buffer to Flask
+      const fileName = req.file.originalname || '';
+      if (!fileName.toLowerCase().endsWith('.csv')) {
+        return res.status(415).json({
+          success: false,
+          message: 'Unsupported file type. Only CSV files (.csv) are accepted.'
+        });
+      }
+
+      if (!req.file.buffer || req.file.buffer.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: 'The uploaded file is empty.'
+        });
+      }
+
       const FormData = require('form-data');
       const form = new FormData();
       form.append('file', req.file.buffer, {
         filename: req.file.originalname,
-        contentType: req.file.mimetype
+        contentType: req.file.mimetype || 'text/csv'
       });
 
       flaskRes = await axios.post(`${FLASK_URL}/predictintrusion`, form, {
-        headers: form.getHeaders()
+        headers: form.getHeaders(),
+        timeout: 15000
       });
     } else if (req.body && (Array.isArray(req.body) || typeof req.body === 'object')) {
+      const payloadString = JSON.stringify(req.body);
+      if (payloadString === '{}' || payloadString === '[]') {
+        return res.status(400).json({
+          success: false,
+          message: 'Request payload cannot be empty.'
+        });
+      }
+
       flaskRes = await axios.post(`${FLASK_URL}/predictintrusion`, req.body, {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
+        timeout: 15000
       });
     } else {
-      return res.status(400).json({ message: 'No file or valid JSON payload uploaded.' });
+      return res.status(400).json({
+        success: false,
+        message: 'No file or valid JSON payload uploaded.'
+      });
     }
 
     const data = flaskRes.data;
 
-    // Log scan event in storage
+    if (!data || data.success === false) {
+      return res.status(400).json({
+        success: false,
+        message: data.message || 'Intrusion scan failed.',
+        missing_columns: data.missing_columns
+      });
+    }
+
+    // Store scan summary using authentic schema
     const newScan = {
       id: 'scan-' + Date.now(),
       userId: req.user ? req.user.id : 'anonymous',
       type: 'Intrusion Detection',
-      target: req.file ? req.file.originalname : 'Direct Feature Input',
-      attackType: data.overall_risk === 'Safe' ? 'Normal' : (data.results[0] ? data.results[0].attack_type : 'DoS'),
-      confidence: data.results[0] ? data.results[0].confidence : 95.0,
-      riskLevel: data.overall_risk || 'Medium',
-      summary: `Analyzed ${data.total_records} connection flows. ${data.threats_detected} threats flagged.`,
+      filename: req.file ? req.file.originalname : 'Preset Sample Payload',
+      totalRecords: data.total_records || 0,
+      normalRecords: data.safe_records || 0,
+      maliciousRecords: data.threats_detected || 0,
+      attackDistribution: data.attack_distribution || {},
+      riskDistribution: data.risk_summary || {},
+      mainAttackCategory: data.main_attack_category || 'Normal',
+      overallRisk: data.overall_risk || 'Low',
+      averageConfidence: data.average_confidence || 0,
       timestamp: new Date().toISOString()
     };
 
     storage.addScan(newScan);
 
-    res.json({
+    return res.json({
       success: true,
       scanId: newScan.id,
       ...data
     });
   } catch (err) {
-    console.error('Error forwarding to Flask ML service:', err.message);
-    
-    // Fail-safe graceful fallback if Flask microservice port 5001 is unreachable during testing
-    const fallbackResults = {
-      success: true,
-      total_records: 1,
-      threats_detected: 1,
-      safe_records: 0,
-      overall_risk: 'High',
-      risk_summary: { Low: 0, Medium: 0, High: 1, Critical: 0 },
-      results: [
-        {
-          record_index: 1,
-          attack_type: 'DoS',
-          confidence: 97.4,
-          risk_level: 'High',
-          explanation: 'Denial of Service SYN-Flood signature identified in network stream.',
-          recommendation: 'Apply perimeter rate limiting and block source subnet.',
-          features: { protocol: 'tcp', service: 'private', flag: 'S0', src_bytes: 0, dst_bytes: 0, count: 240 }
+    if (err.response) {
+      // Forward Flask's status code and error details directly
+      return res.status(err.response.status).json(
+        err.response.data || {
+          success: false,
+          message: 'Error returned from ML microservice.'
         }
-      ]
-    };
-    res.json(fallbackResults);
+      );
+    }
+
+    // Flask connection error or timeout
+    return res.status(503).json({
+      success: false,
+      message: 'The intrusion detection service is currently unavailable. Please start the Flask ML service and try again.'
+    });
   }
 };

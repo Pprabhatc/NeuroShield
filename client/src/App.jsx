@@ -1,65 +1,44 @@
 import React, { useState } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { LandingPage } from './pages/LandingPage';
 import { Dashboard } from './pages/Dashboard';
 import { NetworkIntrusion } from './pages/NetworkIntrusion';
-import { ScamDetector } from './pages/ScamDetector';
-import { PhishingAnalyzer } from './pages/PhishingAnalyzer';
-import { ThreatIntel } from './pages/ThreatIntel';
+import { DetectionHistory } from './pages/DetectionHistory';
+import { ModelPerformance } from './pages/ModelPerformance';
 import { Profile } from './pages/Profile';
 import { Auth } from './pages/Auth';
 
 export const App = () => {
-  const [activeTab, setActiveTab] = useState('landing');
   const [authModalOpen, setAuthModalOpen] = useState(false);
-
-  const renderActivePage = () => {
-    switch (activeTab) {
-      case 'landing':
-        return <LandingPage onLaunchScanner={setActiveTab} onOpenAuth={() => setAuthModalOpen(true)} />;
-      case 'dashboard':
-        return <Dashboard onNavigate={setActiveTab} />;
-      case 'intrusion':
-        return <NetworkIntrusion />;
-      case 'scam':
-        return <ScamDetector />;
-      case 'phishing':
-        return <PhishingAnalyzer />;
-      case 'threats':
-        return <ThreatIntel />;
-      case 'profile':
-        return <Profile />;
-      default:
-        return <LandingPage onLaunchScanner={setActiveTab} onOpenAuth={() => setAuthModalOpen(true)} />;
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0B1020] text-gray-100 font-sans selection:bg-[#00E5A8]/30 selection:text-[#00E5A8]">
-      
+
       {/* Top Navbar */}
-      <Navbar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onOpenAuth={() => setAuthModalOpen(true)}
-      />
+      <Navbar onOpenAuth={() => setAuthModalOpen(true)} />
 
       {/* Main Content Viewport */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-        {renderActivePage()}
+        <Routes>
+          <Route path="/" element={<LandingPage onOpenAuth={() => setAuthModalOpen(true)} />} />
+          <Route path="/dashboard" element={<Dashboard onOpenAuth={() => setAuthModalOpen(true)} />} />
+          <Route path="/intrusion" element={<NetworkIntrusion onOpenAuth={() => setAuthModalOpen(true)} />} />
+          <Route path="/history" element={<DetectionHistory />} />
+          <Route path="/model-performance" element={<ModelPerformance />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
 
       {/* Auth Modal Overlay */}
       {authModalOpen && (
-        <Auth
-          onClose={() => setAuthModalOpen(false)}
-          onSuccess={() => setActiveTab('dashboard')}
-        />
+        <Auth onClose={() => setAuthModalOpen(false)} />
       )}
 
       {/* Footer */}
-      <Footer onNavigate={setActiveTab} />
+      <Footer />
     </div>
   );
 };

@@ -21,6 +21,8 @@ app.use('/api/intrusion', require('./routes/intrusionRoutes'));
 app.use('/api/nlp', require('./routes/nlpRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/history', require('./routes/historyRoutes'));
+app.use('/api/health', require('./routes/healthRoutes'));
+app.use('/api/model', require('./routes/modelRoutes'));
 
 // Root Health Check
 app.get('/health', (req, res) => {
@@ -30,6 +32,7 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -29,7 +29,7 @@ labels = ['Normal', 'DoS', 'Probe', 'R2L', 'U2R', 'Brute Force', 'Botnet']
 data = []
 for i in range(n_samples):
     label = np.random.choice(labels, p=[0.45, 0.20, 0.12, 0.08, 0.03, 0.07, 0.05])
-    
+
     if label == 'Normal':
         dur = np.random.exponential(scale=2)
         proto = 'tcp' if np.random.rand() > 0.3 else ('udp' if np.random.rand() > 0.5 else 'icmp')

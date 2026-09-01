@@ -99,6 +99,13 @@ ATTACK_EXPLANATIONS = {
 }
 
 
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
+
+@app.errorhandler(413)
+def request_entity_too_large(error):
+    return jsonify({'success': False, 'message': 'The uploaded file exceeds the 10 MB limit.'}), 413
+
+
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({
@@ -118,52 +125,79 @@ def predict_intrusion():
         df = None
         if 'file' in request.files:
             file = request.files['file']
-            content = file.read().decode('utf-8')
-            df = pd.read_csv(io.StringIO(content))
+            if not file or file.filename == '':
+                return jsonify({'success': False, 'message': 'No selected file or empty file uploaded.'}), 400
+            try:
+                content = file.read().decode('utf-8')
+                if not content.strip():
+                    return jsonify({'success': False, 'message': 'Uploaded CSV file is empty.'}), 400
+                df = pd.read_csv(io.StringIO(content))
+            except Exception as pe:
+                return jsonify({'success': False, 'message': f'Malformed CSV file: {str(pe)}'}), 400
         elif request.is_json:
             data = request.get_json()
             if isinstance(data, list):
                 df = pd.DataFrame(data)
             elif isinstance(data, dict):
                 df = pd.DataFrame([data])
-        
-        if df is None or df.empty:
-            return jsonify({'error': 'No valid CSV or JSON payload provided.'}), 400
 
-        # Required columns default fallback mapping
-        expected_cols = ['duration', 'protocol_type', 'service', 'flag', 'src_bytes', 'dst_bytes', 
+        if df is None or df.empty:
+            return jsonify({'success': False, 'message': 'No valid CSV data provided.'}), 400
+
+        # Maximum row limit check
+        if len(df) > 10000:
+            return jsonify({'success': False, 'message': 'CSV exceeds maximum processing limit of 10,000 rows.'}), 400
+
+        # Required columns strict check
+        required_cols = ['duration', 'protocol_type', 'service', 'flag', 'src_bytes', 'dst_bytes',
                          'count', 'srv_count', 'serror_rate', 'rerror_rate', 'same_srv_rate', 'diff_srv_rate']
 
-        for col in expected_cols:
-            if col not in df.columns:
-                if col in ['protocol_type']:
-                    df[col] = 'tcp'
-                elif col in ['service']:
-                    df[col] = 'http'
-                elif col in ['flag']:
-                    df[col] = 'SF'
-                else:
-                    df[col] = 0
+        missing_cols = [col for col in required_cols if col not in df.columns]
+        if missing_cols:
+            return jsonify({
+                'success': False,
+                'message': 'Invalid CSV format.',
+                'missing_columns': missing_cols
+            }), 400
 
-        # Clean string features
-        df['protocol_type'] = df['protocol_type'].astype(str).str.lower()
-        df['service'] = df['service'].astype(str).str.lower()
-        df['flag'] = df['flag'].astype(str).str.upper()
+        # Validate numeric columns
+        numeric_cols = ['duration', 'src_bytes', 'dst_bytes', 'count', 'srv_count', 'serror_rate', 'rerror_rate', 'same_srv_rate', 'diff_srv_rate']
+        for col in numeric_cols:
+            df[col] = pd.to_numeric(df[col], errors='coerce')
+
+        if df[numeric_cols].isnull().any().any():
+            return jsonify({'success': False, 'message': 'CSV contains invalid or missing numeric values in required feature columns.'}), 400
+
+        # Clean string categorical features
+        df['protocol_type'] = df['protocol_type'].astype(str).str.lower().str.strip()
+        df['service'] = df['service'].astype(str).str.lower().str.strip()
+        df['flag'] = df['flag'].astype(str).str.upper().str.strip()
 
         le_p = encoders_intrusion['protocol_type']
         le_s = encoders_intrusion['service']
         le_f = encoders_intrusion['flag']
 
-        # Safe label transform
-        def safe_transform(le, val_series, default_val):
-            known_classes = set(le.classes_)
-            return val_series.apply(lambda x: le.transform([x])[0] if x in known_classes else le.transform([default_val])[0])
+        # Strict categorical validation against encoder classes
+        valid_protocols = [str(c).lower().strip() for c in le_p.classes_]
+        invalid_p = [val for val in df['protocol_type'].unique() if val not in valid_protocols]
+        if len(invalid_p) > 0:
+            return jsonify({'success': False, 'message': f"CSV contains unsupported categorical value in column 'protocol_type': '{invalid_p[0]}'."}), 400
+
+        valid_services = [str(c).lower().strip() for c in le_s.classes_]
+        invalid_s = [val for val in df['service'].unique() if val not in valid_services]
+        if len(invalid_s) > 0:
+            return jsonify({'success': False, 'message': f"CSV contains unsupported categorical value in column 'service': '{invalid_s[0]}'."}), 400
+
+        valid_flags = [str(c).upper().strip() for c in le_f.classes_]
+        invalid_f = [val for val in df['flag'].unique() if val not in valid_flags]
+        if len(invalid_f) > 0:
+            return jsonify({'success': False, 'message': f"CSV contains unsupported categorical value in column 'flag': '{invalid_f[0]}'."}), 400
 
         df_enc = pd.DataFrame()
         df_enc['duration'] = df['duration'].astype(float)
-        df_enc['protocol_type'] = safe_transform(le_p, df['protocol_type'], 'tcp')
-        df_enc['service'] = safe_transform(le_s, df['service'], 'http')
-        df_enc['flag'] = safe_transform(le_f, df['flag'], 'SF')
+        df_enc['protocol_type'] = df['protocol_type'].apply(lambda x: le_p.transform([x])[0])
+        df_enc['service'] = df['service'].apply(lambda x: le_s.transform([x])[0])
+        df_enc['flag'] = df['flag'].apply(lambda x: le_f.transform([x])[0])
         df_enc['src_bytes'] = df['src_bytes'].astype(float)
         df_enc['dst_bytes'] = df['dst_bytes'].astype(float)
         df_enc['count'] = df['count'].astype(float)
@@ -177,19 +211,22 @@ def predict_intrusion():
         preds = rf_intrusion.predict(X_scaled)
         probs = rf_intrusion.predict_proba(X_scaled)
 
-        classes = rf_intrusion.classes_
-
         results = []
         threat_count = 0
         risk_summary = {'Low': 0, 'Medium': 0, 'High': 0, 'Critical': 0}
+        attack_dist = {}
+
+        total_confidence = 0.0
 
         for idx, (pred, prob_row) in enumerate(zip(preds, probs)):
             max_prob = float(np.max(prob_row))
             conf_pct = round(max_prob * 100, 2)
-            
+            total_confidence += conf_pct
+
             exp = ATTACK_EXPLANATIONS.get(pred, ATTACK_EXPLANATIONS['Normal'])
             risk = exp['risk']
             risk_summary[risk] = risk_summary.get(risk, 0) + 1
+            attack_dist[pred] = attack_dist.get(pred, 0) + 1
 
             if pred != 'Normal':
                 threat_count += 1
@@ -202,9 +239,9 @@ def predict_intrusion():
                 'explanation': exp['desc'],
                 'recommendation': exp['recommendation'],
                 'features': {
-                    'protocol': df.iloc[idx]['protocol_type'],
-                    'service': df.iloc[idx]['service'],
-                    'flag': df.iloc[idx]['flag'],
+                    'protocol': str(df.iloc[idx]['protocol_type']),
+                    'service': str(df.iloc[idx]['service']),
+                    'flag': str(df.iloc[idx]['flag']),
                     'src_bytes': int(df.iloc[idx]['src_bytes']),
                     'dst_bytes': int(df.iloc[idx]['dst_bytes']),
                     'count': int(df.iloc[idx]['count'])
@@ -213,6 +250,7 @@ def predict_intrusion():
 
         dominant_attack = max(set(preds), key=list(preds).count)
         overall_risk = ATTACK_EXPLANATIONS.get(dominant_attack, ATTACK_EXPLANATIONS['Normal'])['risk'] if threat_count > 0 else 'Low'
+        avg_confidence = round(total_confidence / len(results), 2) if len(results) > 0 else 0.0
 
         return jsonify({
             'success': True,
@@ -221,11 +259,14 @@ def predict_intrusion():
             'safe_records': len(results) - threat_count,
             'overall_risk': overall_risk,
             'risk_summary': risk_summary,
-            'results': results[:100]  # top 100 for payload optimization
+            'attack_distribution': attack_dist,
+            'average_confidence': avg_confidence,
+            'main_attack_category': dominant_attack,
+            'results': results[:200]  # top 200 items max in response
         }), 200
 
     except Exception as e:
-        return jsonify({'error': f'Failed to process intrusion model prediction: {str(e)}'}), 500
+        return jsonify({'success': False, 'message': f'Failed to process intrusion model prediction: {str(e)}'}), 500
 
 
 # -----------------------------------------------------------
@@ -242,11 +283,11 @@ def predict_scam():
 
         # NLP preprocessing & tokenization
         text_lower = text.lower()
-        
+
         X_vec = tfidf_scam.transform([text_lower])
         probs = clf_scam.predict_proba(X_vec)[0]
         categories = clf_scam.classes_
-        
+
         top_idx = int(np.argmax(probs))
         predicted_category = str(categories[top_idx])
         confidence = float(probs[top_idx])

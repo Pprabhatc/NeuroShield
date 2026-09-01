@@ -9,7 +9,7 @@ const protect = (req, res, next) => {
     try {
       token = req.headers.authorization.split(' ')[1];
       const decoded = jwt.verify(token, JWT_SECRET);
-      
+
       const user = storage.findUserById(decoded.id);
       if (user) {
         req.user = user;
@@ -18,13 +18,11 @@ const protect = (req, res, next) => {
       }
       return next();
     } catch (error) {
-      return res.status(401).json({ message: 'Unauthorized access. Token invalid or expired.' });
+      return res.status(401).json({ success: false, message: 'Unauthorized access. Token invalid or expired.' });
     }
   }
 
-  // Fallback for demo unauthenticated testing mode if token missing
-  req.user = { id: 'demo-analyst', name: 'Cyber Analyst', email: 'analyst@neuroshield.io', role: 'Security Analyst' };
-  next();
+  return res.status(401).json({ success: false, message: 'Please sign in to run an intrusion scan.' });
 };
 
 module.exports = { protect, JWT_SECRET };

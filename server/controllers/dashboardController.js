@@ -2,44 +2,56 @@ const storage = require('../services/storage');
 
 exports.getAnalytics = async (req, res) => {
   try {
-    const scans = storage.getScans();
+    let scans = storage.getScans() || [];
+
+    // Filter scans by user if authenticated and not admin
+    if (req.user && req.user.role !== 'Admin') {
+      scans = scans.filter(s => s.userId === req.user.id || s.userId === 'anonymous');
+    }
 
     const totalScans = scans.length;
-    let threatsDetected = 0;
-    let safeScans = 0;
-    let highRiskAlerts = 0;
+    let totalFlows = 0;
+    let normalFlows = 0;
+    let maliciousFlows = 0;
+    let highCriticalAlerts = 0;
 
     const attackDistribution = {};
-    const riskDistribution = { 'Safe': 0, 'Medium': 0, 'High': 0, 'Critical': 0 };
+    const riskDistribution = { 'Safe': 0, 'Low': 0, 'Medium': 0, 'High': 0, 'Critical': 0 };
+    const dateTrendMap = {};
 
     scans.forEach(s => {
-      const risk = s.riskLevel || 'Safe';
-      if (risk.includes('Safe') || s.attackType === 'Normal') {
-        safeScans += 1;
-        riskDistribution['Safe'] = (riskDistribution['Safe'] || 0) + 1;
+      const records = s.totalRecords || 1;
+      const normal = s.normalRecords !== undefined ? s.normalRecords : (s.overallRisk === 'Low' || s.overallRisk === 'Safe' ? records : 0);
+      const malicious = s.maliciousRecords !== undefined ? s.maliciousRecords : records - normal;
+
+      totalFlows += records;
+      normalFlows += normal;
+      maliciousFlows += malicious;
+
+      const risk = s.overallRisk || s.riskLevel || 'Low';
+      if (risk === 'High' || risk === 'Critical') {
+        highCriticalAlerts += 1;
+      }
+      riskDistribution[risk] = (riskDistribution[risk] || 0) + 1;
+
+      // Group attack categories from scan summary or main category
+      if (s.attackDistribution && Object.keys(s.attackDistribution).length > 0) {
+        Object.entries(s.attackDistribution).forEach(([cat, count]) => {
+          attackDistribution[cat] = (attackDistribution[cat] || 0) + count;
+        });
       } else {
-        threatsDetected += 1;
-        if (risk.includes('High')) {
-          highRiskAlerts += 1;
-          riskDistribution['High'] = (riskDistribution['High'] || 0) + 1;
-        } else if (risk.includes('Critical')) {
-          highRiskAlerts += 1;
-          riskDistribution['Critical'] = (riskDistribution['Critical'] || 0) + 1;
-        } else {
-          riskDistribution['Medium'] = (riskDistribution['Medium'] || 0) + 1;
-        }
+        const cat = s.mainAttackCategory || s.attackType || 'Normal';
+        attackDistribution[cat] = (attackDistribution[cat] || 0) + 1;
       }
 
-      const atk = s.attackType || 'Normal';
-      attackDistribution[atk] = (attackDistribution[atk] || 0) + 1;
-    });
-
-    // Detection trend data (last 7 days)
-    const trendMap = {};
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    days.forEach(d => {
-      trendMap[d] = { day: d, threats: Math.floor(Math.random() * 25) + 5, safe: Math.floor(Math.random() * 40) + 30, total: 0 };
-      trendMap[d].total = trendMap[d].threats + trendMap[d].safe;
+      // Date trend grouping
+      const scanDate = new Date(s.timestamp || Date.now()).toISOString().split('T')[0];
+      if (!dateTrendMap[scanDate]) {
+        dateTrendMap[scanDate] = { date: scanDate, threats: 0, safe: 0, total: 0 };
+      }
+      dateTrendMap[scanDate].threats += malicious;
+      dateTrendMap[scanDate].safe += normal;
+      dateTrendMap[scanDate].total += records;
     });
 
     const attackPieChart = Object.keys(attackDistribution).map(key => ({
@@ -47,39 +59,35 @@ exports.getAnalytics = async (req, res) => {
       value: attackDistribution[key]
     }));
 
-    const riskBarChart = Object.keys(riskDistribution).map(key => ({
-      risk: key,
-      count: riskDistribution[key]
-    }));
+    const riskBarChart = Object.keys(riskDistribution)
+      .filter(k => riskDistribution[k] > 0 || totalScans === 0)
+      .map(key => ({
+        risk: key,
+        count: riskDistribution[key]
+      }));
+
+    const detectionTrend = Object.values(dateTrendMap).sort((a, b) => a.date.localeCompare(b.date));
 
     res.json({
       success: true,
       metrics: {
-        totalScans: totalScans + 428,  // realistic enterprise metric baseline
-        threatsDetected: threatsDetected + 134,
-        safeScans: safeScans + 294,
-        highRiskAlerts: highRiskAlerts + 56,
-        systemHealth: {
-          flaskService: 'Online (Port 5001)',
-          expressService: 'Online (Port 5000)',
-          mlPipeline: 'Scikit-learn / TF-IDF Active',
-          database: 'Storage Engine Active'
-        }
+        totalScans,
+        totalNetworkFlows: totalFlows,
+        normalFlows,
+        maliciousFlows,
+        highCriticalAlerts
       },
       charts: {
-        detectionTrend: Object.values(trendMap),
-        attackDistribution: attackPieChart.length > 0 ? attackPieChart : [
-          { name: 'DoS', value: 38 },
-          { name: 'Phishing', value: 25 },
-          { name: 'OTP Fraud', value: 18 },
-          { name: 'Probe', value: 12 },
-          { name: 'Botnet', value: 7 }
-        ],
+        detectionTrend,
+        attackDistribution: attackPieChart,
         riskDistribution: riskBarChart
       },
       recentScans: scans.slice(0, 10)
     });
   } catch (err) {
-    res.status(500).json({ message: 'Error retrieving analytics: ' + err.message });
+    res.status(500).json({
+      success: false,
+      message: 'Error retrieving analytics: ' + err.message
+    });
   }
 };

@@ -49,7 +49,7 @@ export const Auth = ({ onClose, onSuccess }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0B1020]/80 backdrop-blur-md">
       <div className="w-full max-w-md glass-card rounded-3xl p-8 border border-gray-800 shadow-2xl relative overflow-hidden">
-        
+
         <button
           onClick={onClose}
           className="absolute top-5 right-5 text-gray-400 hover:text-white transition-colors"
@@ -139,7 +139,7 @@ export const Auth = ({ onClose, onSuccess }) => {
               >
                 <option value="Senior SOC Lead">Senior SOC Lead</option>
                 <option value="Network Incident Responder">Network Incident Responder</option>
-                <option value="NLP Malware Analyst">NLP Malware Analyst</option>
+                <option value="IDS Security Analyst">IDS Security Analyst</option>
                 <option value="Security Researcher">Security Researcher</option>
               </select>
             </div>

@@ -2,202 +2,185 @@
   "users": [],
   "scans": [
     {
-      "id": "scan-1787120776772",
+      "id": "scan-1788283833839",
       "userId": "demo-analyst",
-      "type": "NLP Scam Detector",
-      "target": "2541854 hftf gfthgh hfhyg ctfhgv ghfhgv ...",
-      "attackType": "Safe",
-      "confidence": 68.11,
-      "riskLevel": "High Risk",
-      "summary": "High probability scam message detected in category 'Safe'. Language contains strong pressure tactics, suspicious key phrases, or unverified action prompts.",
-      "timestamp": "2026-08-19T06:26:16.772Z"
+      "type": "Intrusion Detection",
+      "filename": "valid_network_telemetry.csv",
+      "totalRecords": 2,
+      "normalRecords": 1,
+      "maliciousRecords": 1,
+      "attackDistribution": {
+        "DoS": 1,
+        "Normal": 1
+      },
+      "riskDistribution": {
+        "Critical": 1,
+        "High": 0,
+        "Low": 1,
+        "Medium": 0
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 81,
+      "timestamp": "2026-09-01T17:30:33.839Z"
     },
     {
-      "id": "scan-1787120767500",
+      "id": "scan-1788283737639",
       "userId": "demo-analyst",
-      "type": "NLP Scam Detector",
-      "target": "2541854...",
-      "attackType": "Safe",
-      "confidence": 68.11,
-      "riskLevel": "High Risk",
-      "summary": "High probability scam message detected in category 'Safe'. Language contains strong pressure tactics, suspicious key phrases, or unverified action prompts.",
-      "timestamp": "2026-08-19T06:26:07.500Z"
+      "type": "Intrusion Detection",
+      "filename": "valid_network_telemetry.csv",
+      "totalRecords": 2,
+      "normalRecords": 1,
+      "maliciousRecords": 1,
+      "attackDistribution": {
+        "DoS": 1,
+        "Normal": 1
+      },
+      "riskDistribution": {
+        "Critical": 1,
+        "High": 0,
+        "Low": 1,
+        "Medium": 0
+      },
+      "mainAttackCategory": "DoS",
+      "overallRisk": "Critical",
+      "averageConfidence": 81,
+      "timestamp": "2026-09-01T17:28:57.639Z"
     },
     {
-      "id": "scan-1787120756376",
+      "id": "scan-1788283737581",
       "userId": "demo-analyst",
-      "type": "NLP Scam Detector",
-      "target": "abhi...",
-      "attackType": "Safe",
-      "confidence": 68.11,
-      "riskLevel": "High Risk",
-      "summary": "High probability scam message detected in category 'Safe'. Language contains strong pressure tactics, suspicious key phrases, or unverified action prompts.",
-      "timestamp": "2026-08-19T06:25:56.376Z"
+      "type": "Intrusion Detection",
+      "filename": "invalid_cat.csv",
+      "totalRecords": 1,
+      "normalRecords": 0,
+      "maliciousRecords": 1,
+      "attackDistribution": {
+        "DoS": 1
+      },
+      "riskDistribution": {
+        "Critical": 1,
+        "High": 0,
+        "Low": 0,
+        "Medium": 0
+      },
+      "mainAttackCategory": "DoS",
+      "overallRisk": "Critical",
+      "averageConfidence": 100,
+      "timestamp": "2026-09-01T17:28:57.581Z"
     },
     {
-      "id": "scan-1787120748739",
+      "id": "scan-1788283692168",
       "userId": "demo-analyst",
-      "type": "NLP Scam Detector",
-      "target": "hii...",
-      "attackType": "Safe",
-      "confidence": 68.11,
-      "riskLevel": "High Risk",
-      "summary": "High probability scam message detected in category 'Safe'. Language contains strong pressure tactics, suspicious key phrases, or unverified action prompts.",
-      "timestamp": "2026-08-19T06:25:48.739Z"
+      "type": "Intrusion Detection",
+      "filename": "valid_network_telemetry.csv",
+      "totalRecords": 2,
+      "normalRecords": 1,
+      "maliciousRecords": 1,
+      "attackDistribution": {
+        "DoS": 1,
+        "Normal": 1
+      },
+      "riskDistribution": {
+        "Critical": 1,
+        "High": 0,
+        "Low": 1,
+        "Medium": 0
+      },
+      "mainAttackCategory": "DoS",
+      "overallRisk": "Critical",
+      "averageConfidence": 81,
+      "timestamp": "2026-09-01T17:28:12.169Z"
     },
     {
-      "id": "scan-1787120722792",
+      "id": "scan-1788283692100",
       "userId": "demo-analyst",
-      "type": "NLP Scam Detector",
-      "target": "hello ...",
-      "attackType": "Safe",
-      "confidence": 68.11,
-      "riskLevel": "High Risk",
-      "summary": "High probability scam message detected in category 'Safe'. Language contains strong pressure tactics, suspicious key phrases, or unverified action prompts.",
-      "timestamp": "2026-08-19T06:25:22.792Z"
+      "type": "Intrusion Detection",
+      "filename": "invalid_cat.csv",
+      "totalRecords": 1,
+      "normalRecords": 0,
+      "maliciousRecords": 1,
+      "attackDistribution": {
+        "DoS": 1
+      },
+      "riskDistribution": {
+        "Critical": 1,
+        "High": 0,
+        "Low": 0,
+        "Medium": 0
+      },
+      "mainAttackCategory": "DoS",
+      "overallRisk": "Critical",
+      "averageConfidence": 100,
+      "timestamp": "2026-09-01T17:28:12.100Z"
     },
     {
-      "id": "scan-1787120705808",
+      "id": "scan-1788283663995",
       "userId": "demo-analyst",
-      "type": "NLP Scam Detector",
-      "target": "hiii uuhg hjyjgjh vgjyg...",
-      "attackType": "Safe",
-      "confidence": 68.11,
-      "riskLevel": "High Risk",
-      "summary": "High probability scam message detected in category 'Safe'. Language contains strong pressure tactics, suspicious key phrases, or unverified action prompts.",
-      "timestamp": "2026-08-19T06:25:05.808Z"
+      "type": "Intrusion Detection",
+      "filename": "valid_network_telemetry.csv",
+      "totalRecords": 2,
+      "normalRecords": 1,
+      "maliciousRecords": 1,
+      "attackDistribution": {
+        "DoS": 1,
+        "Normal": 1
+      },
+      "riskDistribution": {
+        "Critical": 1,
+        "High": 0,
+        "Low": 1,
+        "Medium": 0
+      },
+      "mainAttackCategory": "DoS",
+      "overallRisk": "Critical",
+      "averageConfidence": 81,
+      "timestamp": "2026-09-01T17:27:43.995Z"
     },
     {
-      "id": "scan-1787120613819",
+      "id": "scan-1788283663885",
       "userId": "demo-analyst",
-      "type": "NLP Scam Detector",
-      "target": "Do not share: Your SBI NetBanking OTP is...",
-      "attackType": "OTP Fraud",
-      "confidence": 75,
-      "riskLevel": "High Risk",
-      "summary": "High probability scam message detected in category 'OTP Fraud'. Language contains strong pressure tactics, suspicious key phrases, or unverified action prompts.",
-      "timestamp": "2026-08-19T06:23:33.819Z"
+      "type": "Intrusion Detection",
+      "filename": "invalid_cat.csv",
+      "totalRecords": 1,
+      "normalRecords": 0,
+      "maliciousRecords": 1,
+      "attackDistribution": {
+        "DoS": 1
+      },
+      "riskDistribution": {
+        "Critical": 1,
+        "High": 0,
+        "Low": 0,
+        "Medium": 0
+      },
+      "mainAttackCategory": "DoS",
+      "overallRisk": "Critical",
+      "averageConfidence": 100,
+      "timestamp": "2026-09-01T17:27:43.885Z"
     },
     {
-      "id": "scan-1787046363564",
+      "id": "scan-1788283026786",
       "userId": "demo-analyst",
-      "type": "NLP Scam Detector",
-      "target": "NeuroShield IDS — Build a Complete Produ...",
-      "attackType": "OTP Fraud",
-      "confidence": 94.5,
-      "riskLevel": "Critical Risk",
-      "summary": "Analysis identified OTP Fraud threat patterns with urgency markers.",
-      "timestamp": "2026-08-18T09:46:03.564Z"
-    },
-    {
-      "id": "scan-1787046261098",
-      "userId": "demo-analyst",
-      "type": "NLP Scam Detector",
-      "target": "Hi Team, attached is the revised project...",
-      "attackType": "Safe",
-      "confidence": 12,
-      "riskLevel": "Safe",
-      "summary": "Analysis identified Safe threat patterns with urgency markers.",
-      "timestamp": "2026-08-18T09:44:21.098Z"
-    },
-    {
-      "id": "scan-1787046253141",
-      "userId": "demo-analyst",
-      "type": "NLP Scam Detector",
-      "target": "Double your Bitcoin in 24 hours! Deposit...",
-      "attackType": "Safe",
-      "confidence": 12,
-      "riskLevel": "Safe",
-      "summary": "Analysis identified Safe threat patterns with urgency markers.",
-      "timestamp": "2026-08-18T09:44:13.141Z"
-    },
-    {
-      "id": "scan-1787046244190",
-      "userId": "demo-analyst",
-      "type": "NLP Scam Detector",
-      "target": "ALERT: Your bank account will be suspend...",
-      "attackType": "Phishing",
-      "confidence": 88,
-      "riskLevel": "High Risk",
-      "summary": "Analysis identified Phishing threat patterns with urgency markers.",
-      "timestamp": "2026-08-18T09:44:04.190Z"
-    },
-    {
-      "id": "scan-1787046240264",
-      "userId": "demo-analyst",
-      "type": "NLP Scam Detector",
-      "target": "Do not share: Your SBI NetBanking OTP is...",
-      "attackType": "OTP Fraud",
-      "confidence": 94.5,
-      "riskLevel": "Critical Risk",
-      "summary": "Analysis identified OTP Fraud threat patterns with urgency markers.",
-      "timestamp": "2026-08-18T09:44:00.264Z"
-    },
-    {
-      "id": "scan-1787046210239",
-      "userId": "demo-analyst",
-      "type": "NLP Scam Detector",
-      "target": "NeuroShield IDS — Build a Complete Produ...",
-      "attackType": "OTP Fraud",
-      "confidence": 94.5,
-      "riskLevel": "Critical Risk",
-      "summary": "Analysis identified OTP Fraud threat patterns with urgency markers.",
-      "timestamp": "2026-08-18T09:43:30.239Z"
-    },
-    {
-      "id": "scan-1787046184764",
-      "userId": "demo-analyst",
-      "type": "NLP Scam Detector",
-      "target": "http://localhost:5001/...",
-      "attackType": "Safe",
-      "confidence": 12,
-      "riskLevel": "Safe",
-      "summary": "Analysis identified Safe threat patterns with urgency markers.",
-      "timestamp": "2026-08-18T09:43:04.764Z"
-    },
-    {
-      "id": "scan-init-001",
-      "userId": "demo-analyst",
-      "type": "Intrusion",
-      "target": "network_telemetry_batch1.csv",
-      "attackType": "DoS",
-      "confidence": 98.4,
-      "riskLevel": "Critical",
-      "summary": "Denial of Service attack (SYN flood) detected in packet telemetry.",
-      "timestamp": "2026-08-18T07:39:40.461Z"
-    },
-    {
-      "id": "scan-init-002",
-      "userId": "demo-analyst",
-      "type": "Scam NLP",
-      "target": "SMS Message (OTP Fraud)",
-      "attackType": "OTP Fraud",
-      "confidence": 96.2,
-      "riskLevel": "High Risk",
-      "summary": "Urgent OTP verification code request detected.",
-      "timestamp": "2026-08-18T04:39:40.463Z"
-    },
-    {
-      "id": "scan-init-003",
-      "userId": "demo-analyst",
-      "type": "Phishing Email",
-      "target": "support@security-alert-center.net",
-      "attackType": "Phishing",
-      "confidence": 91.5,
-      "riskLevel": "High Risk",
-      "summary": "Brand impersonation and fake verification portal link.",
-      "timestamp": "2026-08-17T21:39:40.463Z"
-    },
-    {
-      "id": "scan-init-004",
-      "userId": "demo-analyst",
-      "type": "Intrusion",
-      "target": "sample_normal_stream.csv",
-      "attackType": "Normal",
-      "confidence": 99.1,
-      "riskLevel": "Safe",
-      "summary": "Standard HTTP protocol traffic adhering to baseline telemetry.",
-      "timestamp": "2026-08-17T09:39:40.463Z"
+      "type": "Intrusion Detection",
+      "filename": "valid_network_telemetry.csv",
+      "totalRecords": 2,
+      "normalRecords": 1,
+      "maliciousRecords": 1,
+      "attackDistribution": {
+        "DoS": 1,
+        "Normal": 1
+      },
+      "riskDistribution": {
+        "Critical": 1,
+        "High": 0,
+        "Low": 1,
+        "Medium": 0
+      },
+      "mainAttackCategory": "DoS",
+      "overallRisk": "Critical",
+      "averageConfidence": 81,
+      "timestamp": "2026-09-01T17:17:06.786Z"
     }
   ]
 }
