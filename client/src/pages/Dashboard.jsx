@@ -64,10 +64,10 @@ export const Dashboard = ({ onOpenAuth }) => {
           <div className="flex items-center gap-3">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white">SOC Control Center</h1>
             <span className="px-2.5 py-1 rounded-full bg-[#00E5A8]/10 text-[#00E5A8] border border-[#00E5A8]/30 font-mono text-xs">
-              IDS TELEMETRY
+              CICIDS2017 & NLP INTELLIGENCE
             </span>
           </div>
-          <p className="text-xs text-gray-400 mt-1">Real-time network intrusion telemetry and Machine Learning flow analytics.</p>
+          <p className="text-xs text-gray-400 mt-1">Real-time CICIDS2017 ML network telemetry, NLP Fake Legal Notice fraud, and SOC analytics.</p>
         </div>
 
         <div className="flex items-center gap-3">

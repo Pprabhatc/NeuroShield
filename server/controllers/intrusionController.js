@@ -9,10 +9,13 @@ exports.predictIntrusion = async (req, res) => {
 
     if (req.file) {
       const fileName = req.file.originalname || '';
-      if (!fileName.toLowerCase().endsWith('.csv')) {
+      const allowedExts = ['.csv', '.pdf', '.txt', '.log', '.json', '.doc', '.docx'];
+      const fileExt = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+
+      if (!allowedExts.includes(fileExt) && !req.file.mimetype.includes('pdf') && !req.file.mimetype.includes('text')) {
         return res.status(415).json({
           success: false,
-          message: 'Unsupported file type. Only CSV files (.csv) are accepted.'
+          message: 'Unsupported file type. Accepted formats: PDF (.pdf), TXT (.txt), LOG (.log), CSV (.csv), JSON (.json), DOCX (.docx).'
         });
       }
 

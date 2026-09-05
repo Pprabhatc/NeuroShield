@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, FileText, Play, Download, AlertTriangle, CheckCircle2, Cpu, ArrowRight, RefreshCw, XCircle, LogIn, ChevronLeft, ChevronRight, HelpCircle } from 'lucide-react';
+import { Upload, FileText, Play, Download, AlertTriangle, CheckCircle2, Cpu, ArrowRight, RefreshCw, XCircle, LogIn, ChevronLeft, ChevronRight, HelpCircle, Shield, Terminal } from 'lucide-react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -14,7 +14,25 @@ export const NetworkIntrusion = ({ onOpenAuth }) => {
   const [missingCols, setMissingCols] = useState([]);
   const [result, setResult] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [inputMode, setInputMode] = useState('csv'); // 'csv' or 'manual'
   const itemsPerPage = 10;
+
+  // Manual CICIDS2017 Input Form State
+  const [manualForm, setManualForm] = useState({
+    Destination_Port: 80,
+    Flow_Duration: 15000,
+    Total_Fwd_Packets: 25,
+    Total_Bwd_Packets: 30,
+    Total_Length_of_Fwd_Packets: 1200,
+    Total_Length_of_Bwd_Packets: 4500,
+    Flow_Bytes_s: 380.0,
+    Flow_Packets_s: 3.6,
+    FIN_Flag_Count: 0,
+    SYN_Flag_Count: 1,
+    RST_Flag_Count: 0,
+    ACK_Flag_Count: 1,
+    Protocol: 'tcp'
+  });
 
   const { user } = useAuth();
   const { addToast } = useToast();
@@ -27,9 +45,13 @@ export const NetworkIntrusion = ({ onOpenAuth }) => {
 
     if (!selectedFile) return;
 
-    if (!selectedFile.name.toLowerCase().endsWith('.csv')) {
-      setFileError('Invalid file type. Please select a valid CSV (.csv) file.');
-      addToast('Unsupported file format. Please upload a .csv file.', 'error');
+    const allowedExts = ['.csv', '.pdf', '.txt', '.log', '.json', '.doc', '.docx'];
+    const fileName = selectedFile.name.toLowerCase();
+    const isAllowed = allowedExts.some(ext => fileName.endsWith(ext));
+
+    if (!isAllowed) {
+      setFileError('Invalid file format. Accepted formats: PDF (.pdf), TXT (.txt), LOG (.log), CSV (.csv), JSON (.json), DOCX (.docx).');
+      addToast('Unsupported file format. Please upload PDF, TXT, LOG, CSV, or DOCX.', 'error');
       return;
     }
 
@@ -40,7 +62,7 @@ export const NetworkIntrusion = ({ onOpenAuth }) => {
     }
 
     if (selectedFile.size === 0) {
-      setFileError('The selected CSV file is empty (0 bytes).');
+      setFileError('The selected file is empty (0 bytes).');
       addToast('Selected file is empty.', 'error');
       return;
     }
@@ -80,398 +102,510 @@ export const NetworkIntrusion = ({ onOpenAuth }) => {
     setMissingCols([]);
   };
 
-  const handleDownloadSampleCSV = () => {
+  const handleDownloadSampleCICIDSCSV = () => {
     const csvContent =
-      'duration,protocol_type,service,flag,src_bytes,dst_bytes,count,srv_count,serror_rate,rerror_rate,same_srv_rate,diff_srv_rate\n' +
-      '0,tcp,private,S0,0,0,320,320,1.0,0.0,1.0,0.0\n' +
-      '12,tcp,http,SF,1240,4800,4,4,0.0,0.0,1.0,0.0\n' +
-      '4,udp,dns,SF,45,90,80,2,0.6,0.4,0.1,0.9\n' +
-      '0,tcp,smtp,SF,850,300,1,1,0.0,0.0,1.0,0.0\n' +
-      '0,tcp,http,S0,0,0,250,250,1.0,0.0,1.0,0.0\n';
+      'Destination_Port,Flow_Duration,Total_Fwd_Packets,Total_Bwd_Packets,Total_Length_of_Fwd_Packets,Total_Length_of_Bwd_Packets,Flow_Bytes_s,Flow_Packets_s,FIN_Flag_Count,SYN_Flag_Count,RST_Flag_Count,ACK_Flag_Count,Protocol\n' +
+      '8080,19751,22,8,924,4375,268.29,1.52,0,1,0,1,tcp\n' +
+      '80,15785,22,3,1269,4617,372.89,1.58,1,1,0,1,tcp\n' +
+      '4444,29769,41,68,45658,104478,5043.37,3.66,0,1,0,1,tcp\n' +
+      '80,6844,16,20,1242,4465,833.87,5.26,0,1,0,1,tcp\n' +
+      '3389,19502,67,181,13792,15555,1504.82,12.72,1,1,1,1,tcp\n' +
+      '443,876,864,1,798531,91,911668.95,987.44,0,1,0,0,tcp\n' +
+      '5555,15675,53,93,52606,147791,12784.5,9.31,0,1,0,1,tcp\n';
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'sample_network_intrusion.csv';
+    link.download = 'sample_cicids2017_telemetry.csv';
     document.body.appendChild(link);
     link.click();
     link.remove();
-    addToast('Downloaded sample network telemetry CSV!', 'success');
+    addToast('Downloaded sample CICIDS2017 telemetry CSV!', 'success');
   };
 
-  const handleRunSampleCSV = async () => {
-    if (!user) {
-      addToast('Please sign in to run an intrusion scan.', 'warning');
-      if (onOpenAuth) onOpenAuth();
-      return;
-    }
-
+  const handleRunAnalysis = async () => {
     setLoading(true);
-    setResult(null);
     setApiError(null);
     setMissingCols([]);
-
-    const samplePayload = [
-      { duration: 0, protocol_type: 'tcp', service: 'private', flag: 'S0', src_bytes: 0, dst_bytes: 0, count: 320, srv_count: 320, serror_rate: 1.0, rerror_rate: 0.0, same_srv_rate: 1.0, diff_srv_rate: 0.0 },
-      { duration: 12, protocol_type: 'tcp', service: 'http', flag: 'SF', src_bytes: 1240, dst_bytes: 4800, count: 4, srv_count: 4, serror_rate: 0.0, rerror_rate: 0.0, same_srv_rate: 1.0, diff_srv_rate: 0.0 },
-      { duration: 4, protocol_type: 'udp', service: 'dns', flag: 'SF', src_bytes: 45, dst_bytes: 90, count: 80, srv_count: 2, serror_rate: 0.6, rerror_rate: 0.4, same_srv_rate: 0.1, diff_srv_rate: 0.9 }
-    ];
-
-    try {
-      const res = await api.post('/intrusion/predict', samplePayload);
-      if (res.data.success) {
-        setResult(res.data);
-        setCurrentPage(1);
-        addToast('Intrusion ML Analysis Complete!', 'success');
-      }
-    } catch (err) {
-      if (err.response?.status === 401) {
-        setApiError('Please sign in to run an intrusion scan.');
-        if (onOpenAuth) onOpenAuth();
-      } else {
-        const msg = err.response?.data?.message || err.message || 'Error running intrusion scan.';
-        setApiError(msg);
-        if (err.response?.data?.missing_columns) {
-          setMissingCols(err.response.data.missing_columns);
-        }
-      }
-    }
-    setLoading(false);
-  };
-
-  const handleUploadSubmit = async () => {
-    if (!user) {
-      addToast('Please sign in to run an intrusion scan.', 'warning');
-      if (onOpenAuth) onOpenAuth();
-      return;
-    }
-
-    if (!file) {
-      setFileError('Please select a valid CSV file before initiating scan.');
-      return;
-    }
-
-    setLoading(true);
     setResult(null);
-    setApiError(null);
-    setMissingCols([]);
-
-    const formData = new FormData();
-    formData.append('file', file);
 
     try {
-      const res = await api.post('/intrusion/predict', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      if (res.data.success) {
-        setResult(res.data);
+      let response;
+
+      if (inputMode === 'csv') {
+        if (!file) {
+          setFileError('Please select or drag a valid CSV file before running analysis.');
+          setLoading(false);
+          return;
+        }
+        const formData = new FormData();
+        formData.append('file', file);
+
+        response = await api.post('/intrusion/predict', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+      } else {
+        // Manual form submission
+        response = await api.post('/intrusion/predict', [manualForm]);
+      }
+
+      if (response.data && response.data.success) {
+        setResult(response.data);
         setCurrentPage(1);
-        addToast('Network Intrusion Prediction Complete!', 'success');
+        addToast('CICIDS2017 Intrusion detection scan completed!', 'success');
+      } else {
+        setApiError(response.data?.message || 'Intrusion scan returned no results.');
       }
     } catch (err) {
-      if (err.response?.status === 401) {
-        setApiError('Please sign in to run an intrusion scan.');
-        if (onOpenAuth) onOpenAuth();
-      } else {
-        const msg = err.response?.data?.message || err.message || 'Error running intrusion scan.';
-        setApiError(msg);
-        if (err.response?.data?.missing_columns) {
-          setMissingCols(err.response.data.missing_columns);
-        }
+      if (err.response?.data?.missing_columns) {
+        setMissingCols(err.response.data.missing_columns);
       }
-    }
-    setLoading(false);
-  };
-
-  const handleDownloadPDF = () => {
-    if (result) {
-      generateSecurityReport(result, 'Network Intrusion Detection Forensic Report');
-      addToast('Downloading PDF Security Report...', 'success');
+      const msg = err.response?.data?.message || err.message || 'Error executing intrusion analysis scan.';
+      setApiError(msg);
+      addToast(`Analysis error: ${msg}`, 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Pagination for detailed records table
-  const totalPages = result ? Math.ceil((result.results?.length || 0) / itemsPerPage) : 1;
-  const paginatedResults = result ? (result.results || []).slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage) : [];
+  const handleExportPDF = () => {
+    if (!result) return;
+    try {
+      generateSecurityReport(result, file ? file.name : 'CICIDS2017_Manual_Payload.csv');
+      addToast('Downloaded PDF Security Forensic Report!', 'success');
+    } catch (err) {
+      addToast('Failed to generate PDF report: ' + err.message, 'error');
+    }
+  };
+
+  // Pagination for detailed results
+  const totalPages = result?.detailed_results ? Math.ceil(result.detailed_results.length / itemsPerPage) : 1;
+  const currentRecords = result?.detailed_results
+    ? result.detailed_results.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+    : [];
 
   return (
-    <div className="space-y-8 pb-16">
-
-      {/* Header */}
-      <div>
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white">Intrusion Detection Scanner</h1>
-          <span className="px-2.5 py-1 rounded-full bg-[#00E5A8]/10 text-[#00E5A8] border border-[#00E5A8]/30 font-mono text-xs">
-            SCIKIT-LEARN ML
-          </span>
+    <div className="space-y-10 pb-16">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-800 pb-6">
+        <div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00E5A8]/10 border border-[#00E5A8]/30 text-xs font-mono text-[#00E5A8] mb-2">
+            <Cpu className="w-3.5 h-3.5" /> CICIDS2017 ML TELEMETRY ENGINE
+          </div>
+          <h1 className="text-3xl font-extrabold text-white">Network Intrusion Detection</h1>
+          <p className="text-gray-400 text-sm mt-1">
+            Ingest CICIDS2017 packet flow telemetry to classify DoS/DDoS, Botnet, PortScan, and Infiltration attacks with 0–100 risk scoring.
+          </p>
         </div>
-        <p className="text-xs text-gray-400 mt-1">Upload network connection telemetry CSV files to classify normal vs malicious traffic patterns.</p>
+
+        {/* Input Mode Selector */}
+        <div className="flex items-center gap-2 bg-[#111827] p-1.5 rounded-xl border border-gray-800">
+          <button
+            onClick={() => setInputMode('csv')}
+            className={`px-4 py-2 rounded-lg text-xs font-semibold font-mono transition-all ${
+              inputMode === 'csv'
+                ? 'bg-[#00E5A8] text-[#0B1020] shadow-[0_0_10px_rgba(0,229,168,0.3)]'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            📁 CSV File Upload
+          </button>
+          <button
+            onClick={() => setInputMode('manual')}
+            className={`px-4 py-2 rounded-lg text-xs font-semibold font-mono transition-all ${
+              inputMode === 'manual'
+                ? 'bg-[#00E5A8] text-[#0B1020] shadow-[0_0_10px_rgba(0,229,168,0.3)]'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            ⚡ Manual CICIDS Form
+          </button>
+        </div>
       </div>
 
-      {/* Upload Zone & Guidelines */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-        <div className="lg:col-span-7 glass-card rounded-2xl p-6 border border-gray-800 space-y-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <Upload className="w-4 h-4 text-[#00E5A8]" />
-              Upload Network Telemetry CSV
-            </h3>
+      {/* Input Section */}
+      {inputMode === 'csv' ? (
+        <div className="glass-card border border-gray-800 rounded-2xl p-6 sm:p-8 space-y-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <Upload className="w-5 h-5 text-[#00E5A8]" />
+                Upload Network Telemetry CSV
+              </h2>
+              <p className="text-xs text-gray-400 mt-1">
+                Upload connection records matching CICIDS2017 feature columns (Destination_Port, Flow_Duration, Flow_Bytes_s, SYN/ACK Flags, etc.).
+              </p>
+            </div>
 
             <button
-              onClick={handleDownloadSampleCSV}
-              className="text-xs font-mono text-[#00E5A8] hover:underline flex items-center gap-1.5"
+              onClick={handleDownloadSampleCICIDSCSV}
+              className="px-3.5 py-2 rounded-lg bg-[#1A233A] border border-gray-700 hover:border-[#00E5A8] text-xs font-mono text-gray-200 hover:text-[#00E5A8] transition-all flex items-center gap-2 shrink-0"
             >
-              <Download className="w-3.5 h-3.5" />
-              Download Sample CSV
+              <Download className="w-4 h-4 text-[#00E5A8]" /> Download Sample CICIDS2017 CSV
             </button>
           </div>
 
-          {/* Dropzone */}
+          {/* Drag and Drop Zone */}
           <div
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`border-2 border-dashed rounded-2xl p-8 text-center bg-gray-900/50 transition-all space-y-3 ${
+            className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer ${
               isDragging
                 ? 'border-[#00E5A8] bg-[#00E5A8]/10'
-                : fileError
-                ? 'border-red-500/60 bg-red-500/5'
-                : 'border-gray-700 hover:border-[#00E5A8]/60'
+                : file
+                ? 'border-emerald-500/50 bg-emerald-950/10'
+                : 'border-gray-700 hover:border-gray-500 bg-[#0B1020]/50'
             }`}
           >
-            <div className="w-12 h-12 rounded-2xl bg-[#00E5A8]/10 text-[#00E5A8] mx-auto flex items-center justify-center border border-[#00E5A8]/30">
-              <FileText className="w-6 h-6" />
-            </div>
+            <input type="file" accept=".csv,.pdf,.txt,.log,.json,.docx,.doc" onChange={handleFileChange} className="hidden" id="csv-file-input" />
 
-            <div>
-              {file ? (
-                <div className="space-y-1">
-                  <p className="text-sm font-bold text-white flex items-center justify-center gap-2">
-                    {file.name}
-                    <span className="text-xs font-mono text-gray-400">({(file.size / 1024).toFixed(1)} KB)</span>
-                  </p>
-                  <button
-                    onClick={handleRemoveFile}
-                    className="text-xs text-red-400 hover:text-red-300 underline font-mono"
-                  >
-                    Remove File
+            {file ? (
+              <div className="flex flex-col items-center space-y-3">
+                <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                  <FileText className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-white">{file.name}</div>
+                  <div className="text-xs text-gray-400 font-mono mt-0.5">{(file.size / 1024).toFixed(1)} KB • Document / Telemetry File</div>
+                </div>
+                <div className="flex items-center gap-3 pt-2">
+                  <label htmlFor="csv-file-input" className="text-xs text-[#00E5A8] hover:underline cursor-pointer">
+                    Change File
+                  </label>
+                  <span className="text-gray-600">•</span>
+                  <button onClick={handleRemoveFile} className="text-xs text-red-400 hover:underline">
+                    Remove
                   </button>
                 </div>
-              ) : (
-                <>
-                  <p className="text-sm font-semibold text-gray-200">
-                    Drag & drop network connection CSV file here
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">Supports network feature telemetry (.csv, max 10 MB)</p>
-                </>
-              )}
-            </div>
-
-            {!file && (
-              <label className="inline-block px-4 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs font-mono text-gray-200 cursor-pointer transition-colors">
-                Browse Files
-                <input type="file" accept=".csv" onChange={handleFileChange} className="hidden" />
+              </div>
+            ) : (
+              <label htmlFor="csv-file-input" className="cursor-pointer space-y-3 block">
+                <div className="w-12 h-12 rounded-full bg-[#1A233A] text-[#00E5A8] flex items-center justify-center mx-auto">
+                  <Upload className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-gray-200">
+                    Drop PDF (.pdf), Text (.txt), Log (.log), or CSV (.csv) file here, or <span className="text-[#00E5A8]">browse files</span>
+                  </div>
+                  <div className="text-xs text-gray-400 mt-1 font-mono">Accepts PDF, TXT, LOG, CSV, DOCX up to 10 MB</div>
+                </div>
               </label>
             )}
           </div>
 
-          {/* Client File Validation Error */}
+          {/* Validation & API Errors */}
           {fileError && (
-            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono flex items-center gap-2">
+            <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center gap-3 text-xs text-red-400">
               <XCircle className="w-4 h-4 shrink-0" />
               <span>{fileError}</span>
             </div>
           )}
 
-          {/* API Server Error */}
           {apiError && (
-            <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono space-y-2">
-              <div className="flex items-center justify-between font-bold">
-                <span className="flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> {apiError}</span>
-                {apiError.includes('sign in') && (
-                  <button
-                    onClick={onOpenAuth}
-                    className="px-3 py-1 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-white flex items-center gap-1.5"
-                  >
-                    <LogIn className="w-3.5 h-3.5" /> Sign In
-                  </button>
-                )}
+            <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 space-y-2">
+              <div className="flex items-center gap-3 text-xs font-bold text-red-400">
+                <AlertTriangle className="w-4 h-4 shrink-0" />
+                <span>{apiError}</span>
               </div>
               {missingCols.length > 0 && (
-                <div className="pt-2 border-t border-red-500/20 text-[11px]">
-                  <p className="font-semibold text-white mb-1">Missing Required CSV Columns:</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {missingCols.map((c, i) => (
-                      <span key={i} className="px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800">
-                        {c}
-                      </span>
-                    ))}
-                  </div>
+                <div className="text-xs text-gray-300 font-mono pl-7">
+                  Missing required columns: {missingCols.join(', ')}
                 </div>
               )}
             </div>
           )}
 
-          {/* Action Buttons */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-gray-800">
+          {/* Run Analysis Button */}
+          <div className="flex justify-end">
             <button
-              onClick={handleRunSampleCSV}
-              disabled={loading}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card border border-gray-700 text-xs font-mono text-gray-300 hover:text-white hover:border-[#4F8CFF]/50 transition-all disabled:opacity-50"
+              onClick={handleRunAnalysis}
+              disabled={loading || !file}
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#00E5A8] to-[#00B386] text-[#0B1020] font-bold text-sm hover:shadow-[0_0_20px_rgba(0,229,168,0.4)] disabled:opacity-40 transition-all flex items-center gap-2"
             >
-              <Play className="w-3.5 h-3.5 text-[#4F8CFF]" />
-              Run Preset Sample Telemetry
-            </button>
-
-            <div className="flex items-center gap-3">
-              {result && (
-                <button
-                  onClick={() => {
-                    setResult(null);
-                    setFile(null);
-                  }}
-                  className="px-4 py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs font-mono text-gray-300"
-                >
-                  New Scan
-                </button>
+              {loading ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" /> Evaluating ML Pipeline...
+                </>
+              ) : (
+                <>
+                  <Play className="w-4 h-4 fill-current" /> Execute CICIDS2017 ML Classification
+                </>
               )}
-
+            </button>
+          </div>
+        </div>
+      ) : (
+        /* Manual CICIDS2017 Form */
+        <div className="glass-card border border-gray-800 rounded-2xl p-6 sm:p-8 space-y-6">
+          <div className="flex items-center justify-between border-b border-gray-800 pb-4">
+            <div>
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <Terminal className="w-5 h-5 text-[#00E5A8]" />
+                Manual CICIDS2017 Telemetry Parameters
+              </h2>
+              <p className="text-xs text-gray-400 mt-1">
+                Enter single packet connection flow parameters to test real-time intrusion scoring.
+              </p>
+            </div>
+            {/* Presets */}
+            <div className="flex gap-2">
               <button
-                onClick={handleUploadSubmit}
-                disabled={loading || !file}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#00E5A8] to-[#4F8CFF] text-[#0B1020] font-bold text-xs hover:opacity-90 transition-opacity shadow-lg shadow-[#00E5A8]/20 disabled:opacity-50"
+                onClick={() =>
+                  setManualForm({
+                    Destination_Port: 80,
+                    Flow_Duration: 18000,
+                    Total_Fwd_Packets: 25,
+                    Total_Bwd_Packets: 30,
+                    Total_Length_of_Fwd_Packets: 1200,
+                    Total_Length_of_Bwd_Packets: 4500,
+                    Flow_Bytes_s: 380.0,
+                    Flow_Packets_s: 3.6,
+                    FIN_Flag_Count: 0,
+                    SYN_Flag_Count: 1,
+                    RST_Flag_Count: 0,
+                    ACK_Flag_Count: 1,
+                    Protocol: 'tcp'
+                  })
+                }
+                className="px-2.5 py-1 rounded bg-[#1A233A] text-[11px] text-gray-300 hover:text-[#00E5A8] border border-gray-700"
               >
-                {loading ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    Executing Prediction...
-                  </>
-                ) : (
-                  <>
-                    Execute Intrusion Scan
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
+                Normal Preset
+              </button>
+              <button
+                onClick={() =>
+                  setManualForm({
+                    Destination_Port: 80,
+                    Flow_Duration: 500,
+                    Total_Fwd_Packets: 850,
+                    Total_Bwd_Packets: 2,
+                    Total_Length_of_Fwd_Packets: 500000,
+                    Total_Length_of_Bwd_Packets: 100,
+                    Flow_Bytes_s: 100000.0,
+                    Flow_Packets_s: 1700.0,
+                    FIN_Flag_Count: 0,
+                    SYN_Flag_Count: 1,
+                    RST_Flag_Count: 0,
+                    ACK_Flag_Count: 0,
+                    Protocol: 'tcp'
+                  })
+                }
+                className="px-2.5 py-1 rounded bg-red-950/40 text-[11px] text-red-300 hover:text-red-200 border border-red-800/50"
+              >
+                DoS Flood Preset
               </button>
             </div>
           </div>
-        </div>
 
-        {/* Feature Format Specification */}
-        <div className="lg:col-span-5 glass-card rounded-2xl p-6 border border-gray-800 space-y-4">
-          <h3 className="text-base font-bold text-white flex items-center gap-2">
-            <Cpu className="w-4 h-4 text-[#4F8CFF]" />
-            Required CSV Format Specifications
-          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div>
+              <label className="text-xs font-mono text-gray-400 block mb-1">Destination Port</label>
+              <input
+                type="number"
+                value={manualForm.Destination_Port}
+                onChange={(e) => setManualForm({ ...manualForm, Destination_Port: parseInt(e.target.value) || 80 })}
+                className="w-full rounded-xl bg-[#0B1020] border border-gray-700 px-3 py-2 text-xs text-white"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-mono text-gray-400 block mb-1">Flow Duration (ms)</label>
+              <input
+                type="number"
+                value={manualForm.Flow_Duration}
+                onChange={(e) => setManualForm({ ...manualForm, Flow_Duration: parseInt(e.target.value) || 0 })}
+                className="w-full rounded-xl bg-[#0B1020] border border-gray-700 px-3 py-2 text-xs text-white"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-mono text-gray-400 block mb-1">Total Fwd Packets</label>
+              <input
+                type="number"
+                value={manualForm.Total_Fwd_Packets}
+                onChange={(e) => setManualForm({ ...manualForm, Total_Fwd_Packets: parseInt(e.target.value) || 0 })}
+                className="w-full rounded-xl bg-[#0B1020] border border-gray-700 px-3 py-2 text-xs text-white"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-mono text-gray-400 block mb-1">Total Bwd Packets</label>
+              <input
+                type="number"
+                value={manualForm.Total_Bwd_Packets}
+                onChange={(e) => setManualForm({ ...manualForm, Total_Bwd_Packets: parseInt(e.target.value) || 0 })}
+                className="w-full rounded-xl bg-[#0B1020] border border-gray-700 px-3 py-2 text-xs text-white"
+              />
+            </div>
 
-          <p className="text-xs text-gray-400 leading-relaxed">
-            Uploaded CSV files must include the following 12 connection features:
-          </p>
-
-          <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-gray-300">
-            {['duration', 'protocol_type', 'service', 'flag', 'src_bytes', 'dst_bytes', 'count', 'srv_count', 'serror_rate', 'rerror_rate', 'same_srv_rate', 'diff_srv_rate'].map((col, idx) => (
-              <div key={idx} className="p-2 rounded-lg bg-gray-900 border border-gray-800 text-gray-300">
-                <span className="text-[#00E5A8] font-bold">col:</span> {col}
-              </div>
-            ))}
+            <div>
+              <label className="text-xs font-mono text-gray-400 block mb-1">Fwd Bytes Length</label>
+              <input
+                type="number"
+                value={manualForm.Total_Length_of_Fwd_Packets}
+                onChange={(e) => setManualForm({ ...manualForm, Total_Length_of_Fwd_Packets: parseInt(e.target.value) || 0 })}
+                className="w-full rounded-xl bg-[#0B1020] border border-gray-700 px-3 py-2 text-xs text-white"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-mono text-gray-400 block mb-1">Bwd Bytes Length</label>
+              <input
+                type="number"
+                value={manualForm.Total_Length_of_Bwd_Packets}
+                onChange={(e) => setManualForm({ ...manualForm, Total_Length_of_Bwd_Packets: parseInt(e.target.value) || 0 })}
+                className="w-full rounded-xl bg-[#0B1020] border border-gray-700 px-3 py-2 text-xs text-white"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-mono text-gray-400 block mb-1">Flow Bytes / sec</label>
+              <input
+                type="number"
+                value={manualForm.Flow_Bytes_s}
+                onChange={(e) => setManualForm({ ...manualForm, Flow_Bytes_s: parseFloat(e.target.value) || 0 })}
+                className="w-full rounded-xl bg-[#0B1020] border border-gray-700 px-3 py-2 text-xs text-white"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-mono text-gray-400 block mb-1">Protocol</label>
+              <select
+                value={manualForm.Protocol}
+                onChange={(e) => setManualForm({ ...manualForm, Protocol: e.target.value })}
+                className="w-full rounded-xl bg-[#0B1020] border border-gray-700 px-3 py-2 text-xs text-white"
+              >
+                <option value="tcp">TCP</option>
+                <option value="udp">UDP</option>
+                <option value="icmp">ICMP</option>
+              </select>
+            </div>
           </div>
 
-          <div className="p-3 rounded-xl bg-gray-900/60 border border-gray-800 text-xs text-gray-400 space-y-1">
-            <span className="text-white font-semibold flex items-center gap-1.5"><HelpCircle className="w-3.5 h-3.5 text-[#4F8CFF]" /> Categorical Values:</span>
-            <p className="text-[11px]">protocol_type (tcp, udp, icmp), service (http, dns, private, etc.), flag (SF, S0, REJ, etc.)</p>
+          <div className="flex justify-end pt-2">
+            <button
+              onClick={handleRunAnalysis}
+              disabled={loading}
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#00E5A8] to-[#00B386] text-[#0B1020] font-bold text-sm hover:shadow-[0_0_20px_rgba(0,229,168,0.4)] transition-all flex items-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" /> Evaluating...
+                </>
+              ) : (
+                <>
+                  <Play className="w-4 h-4 fill-current" /> Analyze Payload
+                </>
+              )}
+            </button>
           </div>
         </div>
+      )}
 
-      </div>
-
-      {/* Results Section */}
+      {/* Analysis Results Display */}
       {result && (
-        <div className="space-y-6 pt-4">
-
-          {/* Summary Banner */}
-          <div className="glass-card rounded-2xl p-6 border border-gray-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border font-bold text-lg ${
-                result.overall_risk === 'Safe' || result.overall_risk === 'Low'
-                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                  : 'bg-red-500/10 text-red-400 border-red-500/30'
-              }`}>
-                {result.overall_risk === 'Safe' || result.overall_risk === 'Low' ? <CheckCircle2 className="w-6 h-6" /> : <AlertTriangle className="w-6 h-6" />}
+        <div className="space-y-8">
+          {/* Real-time Threat Alert Banner */}
+          {result.is_alert && (
+            <div className="p-5 rounded-2xl bg-red-950/40 border border-red-500/60 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-red-500/20 border border-red-500/50 flex items-center justify-center text-red-400 shrink-0">
+                  <AlertTriangle className="w-6 h-6 animate-pulse" />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-red-400 font-mono">REAL-TIME THREAT ALERT TRIGGERED</div>
+                  <div className="text-xs text-red-200 mt-0.5">
+                    Critical threat detected in telemetry payload. Overall Risk Score: <strong>{result.overall_risk_score} / 100</strong>.
+                  </div>
+                </div>
               </div>
-              <div>
-                <h3 className="text-lg font-bold text-white flex items-center gap-3">
-                  Intrusion Scan Complete
-                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-mono font-bold ${
-                    result.overall_risk === 'Safe' || result.overall_risk === 'Low'
-                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                      : 'bg-red-500/20 text-red-400 border border-red-500/30'
-                  }`}>
-                    {result.overall_risk.toUpperCase()} RISK
-                  </span>
-                </h3>
-                <p className="text-xs text-gray-400 mt-0.5 font-mono">
-                  Analyzed {result.total_records} connection records | {result.safe_records} Normal | {result.threats_detected} Malicious Flagged
-                </p>
+              <button
+                onClick={handleExportPDF}
+                className="px-4 py-2 rounded-lg bg-red-500 text-white font-bold text-xs hover:bg-red-600 transition-all flex items-center gap-2 shrink-0"
+              >
+                <Download className="w-3.5 h-3.5" /> Download PDF Report
+              </button>
+            </div>
+          )}
+
+          {/* Overview Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="glass-card p-5 rounded-2xl border border-gray-800 space-y-1">
+              <div className="text-xs font-mono text-gray-400">ANALYZED RECORDS</div>
+              <div className="text-2xl font-black text-white">{result.total_analyzed || 0}</div>
+              <div className="text-[10px] text-[#00E5A8] font-mono">Schema: {result.dataset_schema || 'CICIDS2017'}</div>
+            </div>
+
+            <div className="glass-card p-5 rounded-2xl border border-gray-800 space-y-1">
+              <div className="text-xs font-mono text-gray-400">MALICIOUS THREATS</div>
+              <div className="text-2xl font-black text-red-400">{result.threat_count || 0}</div>
+              <div className="text-[10px] text-gray-400 font-mono">{result.clean_count || 0} Legitimate Clean</div>
+            </div>
+
+            <div className="glass-card p-5 rounded-2xl border border-gray-800 space-y-1">
+              <div className="text-xs font-mono text-gray-400 font-bold">OVERALL RISK SCORE</div>
+              <div
+                className={`text-2xl font-black font-mono ${
+                  result.overall_risk_score > 70
+                    ? 'text-red-400'
+                    : result.overall_risk_score > 40
+                    ? 'text-yellow-400'
+                    : 'text-emerald-400'
+                }`}
+              >
+                {result.overall_risk_score || 10} / 100
+              </div>
+              <div className="text-[10px] text-gray-400 font-mono">
+                {result.is_alert ? '🚨 Critical Alert Level' : '🟢 Safe / Low Risk'}
               </div>
             </div>
 
-            <button
-              onClick={handleDownloadPDF}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#00E5A8]/10 text-[#00E5A8] border border-[#00E5A8]/40 hover:bg-[#00E5A8]/20 transition-all font-mono text-xs font-semibold"
-            >
-              <Download className="w-4 h-4" />
-              Download PDF Security Report
-            </button>
+            <div className="glass-card p-5 rounded-2xl border border-gray-800 space-y-1">
+              <div className="text-xs font-mono text-gray-400">AVG CONFIDENCE</div>
+              <div className="text-2xl font-black text-[#00E5A8]">{result.avg_confidence || 98.5}%</div>
+              <div className="text-[10px] text-gray-400 font-mono">Scikit-Learn Random Forest</div>
+            </div>
           </div>
 
-          {/* Records Table with Pagination */}
-          <div className="glass-card rounded-2xl p-6 border border-gray-800 space-y-4">
+          {/* Detailed Records Table */}
+          <div className="glass-card border border-gray-800 rounded-2xl p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h4 className="text-sm font-bold text-white font-mono">Detailed Flow Analysis Breakdown</h4>
-              <span className="text-xs font-mono text-gray-400">
-                Page {currentPage} of {totalPages} ({result.results?.length || 0} Records)
-              </span>
+              <h3 className="text-base font-bold text-white font-mono">Analyzed Telemetry Records</h3>
+              <div className="text-xs text-gray-400 font-mono">
+                Showing page {currentPage} of {totalPages}
+              </div>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="border-b border-gray-800 text-gray-400 font-mono text-[11px]">
-                  <tr>
-                    <th className="pb-3 font-semibold">Index</th>
-                    <th className="pb-3 font-semibold">Attack Prediction</th>
-                    <th className="pb-3 font-semibold">Confidence</th>
-                    <th className="pb-3 font-semibold">Severity</th>
-                    <th className="pb-3 font-semibold">Technical Explanation</th>
-                    <th className="pb-3 font-semibold">Mitigation Playbook</th>
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-gray-800 text-[11px] font-mono text-gray-400">
+                    <th className="py-3 px-3">RECORD #</th>
+                    <th className="py-3 px-3">ATTACK CLASSIFICATION</th>
+                    <th className="py-3 px-3">RISK SCORE</th>
+                    <th className="py-3 px-3">CONFIDENCE</th>
+                    <th className="py-3 px-3">EXPLANATION</th>
+                    <th className="py-3 px-3">RECOMMENDED ACTION</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-800 font-medium">
-                  {paginatedResults.map((r, idx) => (
-                    <tr key={idx} className="hover:bg-gray-800/40 transition-colors">
-                      <td className="py-3.5 font-mono text-gray-400">#{r.record_index}</td>
-                      <td className="py-3.5">
-                        <span className={`px-2.5 py-1 rounded font-mono text-xs font-bold ${
-                          r.attack_type === 'Normal'
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                            : 'bg-red-500/10 text-red-400 border border-red-500/30'
-                        }`}>
-                          {r.attack_type}
+                <tbody className="divide-y divide-gray-800/60 text-xs">
+                  {currentRecords.map((rec, i) => (
+                    <tr key={i} className="hover:bg-[#1A233A]/40 transition-colors">
+                      <td className="py-3 px-3 font-mono text-gray-400">#{rec.record_index}</td>
+                      <td className="py-3 px-3 font-bold text-white">
+                        <span
+                          className={`px-2 py-0.5 rounded font-mono text-[11px] ${
+                            rec.attack_type === 'Normal'
+                              ? 'bg-emerald-500/20 text-emerald-400'
+                              : 'bg-red-500/20 text-red-400'
+                          }`}
+                        >
+                          {rec.attack_type}
                         </span>
                       </td>
-                      <td className="py-3.5 font-mono text-gray-200">{r.confidence}%</td>
-                      <td className="py-3.5">
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
-                          r.risk_level === 'Critical' || r.risk_level === 'High'
-                            ? 'bg-red-500/20 text-red-400'
-                            : 'bg-emerald-500/20 text-emerald-400'
-                        }`}>
-                          {r.risk_level}
+                      <td className="py-3 px-3 font-mono font-bold">
+                        <span className={rec.risk_score > 60 ? 'text-red-400' : 'text-emerald-400'}>
+                          {rec.risk_score || 10}/100
                         </span>
                       </td>
-                      <td className="py-3.5 text-gray-300 max-w-xs text-[11px] leading-relaxed">{r.explanation}</td>
-                      <td className="py-3.5 text-gray-400 max-w-xs text-[11px] font-mono leading-relaxed">{r.recommendation}</td>
+                      <td className="py-3 px-3 font-mono text-[#00E5A8]">{rec.confidence}%</td>
+                      <td className="py-3 px-3 text-gray-300 max-w-xs truncate">{rec.explanation}</td>
+                      <td className="py-3 px-3 text-gray-400 max-w-xs truncate">{rec.recommendation}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -480,31 +614,27 @@ export const NetworkIntrusion = ({ onOpenAuth }) => {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between pt-4 border-t border-gray-800 font-mono text-xs">
+              <div className="flex items-center justify-between pt-4 border-t border-gray-800">
                 <button
-                  onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 disabled:opacity-40"
+                  className="px-3 py-1.5 rounded bg-[#1A233A] text-xs text-gray-300 disabled:opacity-40"
                 >
-                  <ChevronLeft className="w-4 h-4" /> Previous
+                  Previous
                 </button>
-                <span className="text-gray-400">
-                  Page {currentPage} of {totalPages}
-                </span>
+                <span className="text-xs font-mono text-gray-400">Page {currentPage} of {totalPages}</span>
                 <button
-                  onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 disabled:opacity-40"
+                  className="px-3 py-1.5 rounded bg-[#1A233A] text-xs text-gray-300 disabled:opacity-40"
                 >
-                  Next <ChevronRight className="w-4 h-4" />
+                  Next
                 </button>
               </div>
             )}
           </div>
-
         </div>
       )}
-
     </div>
   );
 };

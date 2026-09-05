@@ -2,6 +2,797 @@
   "users": [],
   "scans": [
     {
+      "id": "scan-1788458908568",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "hghfhjv...",
+      "timestamp": "2026-09-03T18:08:28.569Z"
+    },
+    {
+      "id": "scan-1788458872885",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "**FICTIONAL LEGAL NOTICE — FOR ENTERTAIN...",
+      "timestamp": "2026-09-03T18:07:52.887Z"
+    },
+    {
+      "id": "scan-1788458750283",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "Dear Mr.pdf",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Fake Legal Notice Fraud": 1
+      },
+      "riskDistribution": {
+        "Critical Threat Alert": 1
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-03T18:05:50.283Z"
+    },
+    {
+      "id": "scan-1788458742756",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "AY24-25-517104343870.pdf",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Safe": 1
+      },
+      "riskDistribution": {
+        "Low / Legitimate": 1
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-03T18:05:42.756Z"
+    },
+    {
+      "id": "scan-1788458726469",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "NeuroShield_Security_Report_1788381297669.pdf",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Safe": 1
+      },
+      "riskDistribution": {
+        "Low / Legitimate": 1
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-03T18:05:26.469Z"
+    },
+    {
+      "id": "scan-1788458576528",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "xnmymxfn...",
+      "timestamp": "2026-09-03T18:02:56.528Z"
+    },
+    {
+      "id": "scan-1788458571171",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "i love...",
+      "timestamp": "2026-09-03T18:02:51.171Z"
+    },
+    {
+      "id": "scan-1788458562749",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "URGENT: Your Netflix account payment fai...",
+      "timestamp": "2026-09-03T18:02:42.749Z"
+    },
+    {
+      "id": "scan-1788458559991",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "SUPREME COURT SUMMONS: Case No. SC-84920...",
+      "timestamp": "2026-09-03T18:02:39.991Z"
+    },
+    {
+      "id": "scan-1788458557677",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "hii...",
+      "timestamp": "2026-09-03T18:02:37.678Z"
+    },
+    {
+      "id": "scan-1788458548679",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "jhjhucvv...",
+      "timestamp": "2026-09-03T18:02:28.680Z"
+    },
+    {
+      "id": "scan-1788458363362",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "Dear Mr.pdf",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Fake Legal Notice Fraud": 1
+      },
+      "riskDistribution": {
+        "Critical Threat Alert": 1
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-03T17:59:23.362Z"
+    },
+    {
+      "id": "scan-1788458350187",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "Fee-Receipt.pdf",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Safe": 1
+      },
+      "riskDistribution": {
+        "Low / Legitimate": 1
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-03T17:59:10.187Z"
+    },
+    {
+      "id": "scan-1788451317201",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "Dear Mr.pdf",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Fake Legal Notice Fraud": 1
+      },
+      "riskDistribution": {
+        "Critical Threat Alert": 1
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-03T16:01:57.201Z"
+    },
+    {
+      "id": "scan-1788451301516",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "BT001S260158277.pdf",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Safe": 1
+      },
+      "riskDistribution": {
+        "Low / Legitimate": 1
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-03T16:01:41.516Z"
+    },
+    {
+      "id": "scan-1788451290551",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "Dear Mr.pdf",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Fake Legal Notice Fraud": 1
+      },
+      "riskDistribution": {
+        "Critical Threat Alert": 1
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-03T16:01:30.551Z"
+    },
+    {
+      "id": "scan-1788451274488",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "Fee-Receipt.pdf",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Safe": 1
+      },
+      "riskDistribution": {
+        "Low / Legitimate": 1
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-03T16:01:14.488Z"
+    },
+    {
+      "id": "scan-1788451189277",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "SUPREME COURT SUMMONS: Case No. SC-84920...",
+      "timestamp": "2026-09-03T15:59:49.277Z"
+    },
+    {
+      "id": "scan-1788451188291",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "SUPREME COURT SUMMONS: Case No. SC-84920...",
+      "timestamp": "2026-09-03T15:59:48.291Z"
+    },
+    {
+      "id": "scan-1788451166488",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "SUPREME COURT SUMMONS: Case No. SC-84920...",
+      "timestamp": "2026-09-03T15:59:26.488Z"
+    },
+    {
+      "id": "scan-1788451165405",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "SUPREME COURT SUMMONS: Case No. SC-84920...",
+      "timestamp": "2026-09-03T15:59:25.405Z"
+    },
+    {
+      "id": "scan-1788451160156",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "CONGRATULATIONS! Your mobile number won ...",
+      "timestamp": "2026-09-03T15:59:20.157Z"
+    },
+    {
+      "id": "scan-1788451158871",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "CONGRATULATIONS! Your mobile number won ...",
+      "timestamp": "2026-09-03T15:59:18.871Z"
+    },
+    {
+      "id": "scan-1788451143307",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "Work from home opportunity! Earn $500/da...",
+      "timestamp": "2026-09-03T15:59:03.307Z"
+    },
+    {
+      "id": "scan-1788451142161",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "Work from home opportunity! Earn $500/da...",
+      "timestamp": "2026-09-03T15:59:02.162Z"
+    },
+    {
+      "id": "scan-1788382651193",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "hii\n...",
+      "timestamp": "2026-09-02T20:57:31.193Z"
+    },
+    {
+      "id": "scan-1788382642188",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "CONGRATULATIONS! Your mobile number won ...",
+      "timestamp": "2026-09-02T20:57:22.188Z"
+    },
+    {
+      "id": "scan-1788382616977",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "Your monthly electricity bill for August...",
+      "timestamp": "2026-09-02T20:56:56.977Z"
+    },
+    {
+      "id": "scan-1788382614098",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "Do not share: Your SBI NetBanking OTP is...",
+      "timestamp": "2026-09-02T20:56:54.098Z"
+    },
+    {
+      "id": "scan-1788382612646",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "Do not share: Your SBI NetBanking OTP is...",
+      "timestamp": "2026-09-02T20:56:52.646Z"
+    },
+    {
+      "id": "scan-1788382459178",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "Do not share: Your SBI NetBanking OTP is...",
+      "timestamp": "2026-09-02T20:54:19.178Z"
+    },
+    {
+      "id": "scan-1788382450423",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "click this link for login \"http://localh...",
+      "timestamp": "2026-09-02T20:54:10.423Z"
+    },
+    {
+      "id": "scan-1788382425505",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "click this link for login \"http://localh...",
+      "timestamp": "2026-09-02T20:53:45.505Z"
+    },
+    {
+      "id": "scan-1788382393905",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "SUPREME COURT SUMMONS: Case No. SC-84920...",
+      "timestamp": "2026-09-02T20:53:13.905Z"
+    },
+    {
+      "id": "scan-1788382373445",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "Reference Number: DCL/2026/8742\nDate of ...",
+      "timestamp": "2026-09-02T20:52:53.445Z"
+    },
+    {
+      "id": "scan-1788382360450",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "⚠️ FICTIONAL / DEMONSTRATION LEGAL NOTIC...",
+      "timestamp": "2026-09-02T20:52:40.450Z"
+    },
+    {
+      "id": "scan-1788382354824",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "hii...",
+      "timestamp": "2026-09-02T20:52:34.824Z"
+    },
+    {
+      "id": "scan-1788382168189",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "hello\n...",
+      "timestamp": "2026-09-02T20:49:28.189Z"
+    },
+    {
+      "id": "scan-1788382162711",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "world...",
+      "timestamp": "2026-09-02T20:49:22.711Z"
+    },
+    {
+      "id": "scan-1788382156763",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "Your monthly electricity bill for August...",
+      "timestamp": "2026-09-02T20:49:16.763Z"
+    },
+    {
+      "id": "scan-1788382153751",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "URGENT: Your Netflix account payment fai...",
+      "timestamp": "2026-09-02T20:49:13.751Z"
+    },
+    {
+      "id": "scan-1788382145298",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "hii...",
+      "timestamp": "2026-09-02T20:49:05.298Z"
+    },
+    {
+      "id": "scan-1788382129710",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "zhrbfbzrfbnzrb...",
+      "timestamp": "2026-09-02T20:48:49.710Z"
+    },
+    {
+      "id": "scan-1788382124729",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "i love you\n...",
+      "timestamp": "2026-09-02T20:48:44.729Z"
+    },
+    {
+      "id": "scan-1788382105701",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "Fictional Case Details:\nCase Reference: ...",
+      "timestamp": "2026-09-02T20:48:25.701Z"
+    },
+    {
+      "id": "scan-1788382094357",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "\n\nThis is to formally inform you that, a...",
+      "timestamp": "2026-09-02T20:48:14.357Z"
+    },
+    {
+      "id": "scan-1788382086416",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "\nThis communication is issued as a ficti...",
+      "timestamp": "2026-09-02T20:48:06.416Z"
+    },
+    {
+      "id": "scan-1788382076816",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "⚠️ FICTIONAL / DEMONSTRATION LEGAL NOTIC...",
+      "timestamp": "2026-09-02T20:47:56.816Z"
+    },
+    {
+      "id": "scan-1788381828134",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "\nThis communication is issued as a ficti...",
+      "timestamp": "2026-09-02T20:43:48.134Z"
+    },
+    {
+      "id": "scan-1788381805208",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "This is to formally inform you that, acc...",
+      "timestamp": "2026-09-02T20:43:25.208Z"
+    },
+    {
+      "id": "scan-1788381772218",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "click this link for update http://localh...",
+      "timestamp": "2026-09-02T20:42:52.218Z"
+    },
+    {
+      "id": "scan-1788381755946",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "click this link for update...",
+      "timestamp": "2026-09-02T20:42:35.946Z"
+    },
+    {
+      "id": "scan-1788381742051",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "link \"Https://...",
+      "timestamp": "2026-09-02T20:42:22.051Z"
+    },
+    {
+      "id": "scan-1788381718678",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "OTP 56023 Instagram OTP...",
+      "timestamp": "2026-09-02T20:41:58.679Z"
+    },
+    {
+      "id": "scan-1788381678417",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "You are charged with illegal digital ass...",
+      "timestamp": "2026-09-02T20:41:18.417Z"
+    },
+    {
+      "id": "scan-1788381667953",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "SUPREME COURT SUMMONS: Case No. SC-84920...",
+      "timestamp": "2026-09-02T20:41:07.953Z"
+    },
+    {
+      "id": "scan-1788381661306",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "dfhtb...",
+      "timestamp": "2026-09-02T20:41:01.306Z"
+    },
+    {
+      "id": "scan-1788381656215",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "i love you\n...",
+      "timestamp": "2026-09-02T20:40:56.215Z"
+    },
+    {
+      "id": "scan-1788381645666",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "hii\n...",
+      "timestamp": "2026-09-02T20:40:45.666Z"
+    },
+    {
+      "id": "scan-1788381640461",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "Your monthly electricity bill for August...",
+      "timestamp": "2026-09-02T20:40:40.461Z"
+    },
+    {
+      "id": "scan-1788381638665",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "Your monthly electricity bill for August...",
+      "timestamp": "2026-09-02T20:40:38.665Z"
+    },
+    {
+      "id": "scan-1788381634781",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "FINAL POLICE NOTICE: Non-bailable arrest...",
+      "timestamp": "2026-09-02T20:40:34.781Z"
+    },
+    {
+      "id": "scan-1788381633296",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "FINAL POLICE NOTICE: Non-bailable arrest...",
+      "timestamp": "2026-09-02T20:40:33.296Z"
+    },
+    {
+      "id": "scan-1788381582232",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "Do not share: Your SBI NetBanking OTP is...",
+      "timestamp": "2026-09-02T20:39:42.232Z"
+    },
+    {
+      "id": "scan-1788381582214",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "FINAL POLICE NOTICE: Non-bailable arrest...",
+      "timestamp": "2026-09-02T20:39:42.214Z"
+    },
+    {
+      "id": "scan-1788381582189",
+      "userId": "guest-analyst",
+      "type": "NLP Scam Detector",
+      "target": "Your monthly electricity bill for August...",
+      "timestamp": "2026-09-02T20:39:42.189Z"
+    },
+    {
+      "id": "scan-1788381296322",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "Dear Mr.pdf",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Fake Legal Notice Fraud": 1
+      },
+      "riskDistribution": {
+        "High Risk Threat": 1
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-02T20:34:56.322Z"
+    },
+    {
+      "id": "scan-1788381286521",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "Fee-Receipt.pdf",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Safe": 1
+      },
+      "riskDistribution": {
+        "Low / Legitimate": 1
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-02T20:34:46.521Z"
+    },
+    {
+      "id": "scan-1788381211527",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "Preset Sample Payload",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Botnet": 1
+      },
+      "riskDistribution": {
+        "Critical": 1,
+        "High": 0,
+        "Low": 0,
+        "Medium": 0
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-02T20:33:31.528Z"
+    },
+    {
+      "id": "scan-1788381203613",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "Preset Sample Payload",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Botnet": 1
+      },
+      "riskDistribution": {
+        "Critical": 1,
+        "High": 0,
+        "Low": 0,
+        "Medium": 0
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-02T20:33:23.613Z"
+    },
+    {
+      "id": "scan-1788381191180",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "Preset Sample Payload",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Botnet": 1
+      },
+      "riskDistribution": {
+        "Critical": 1,
+        "High": 0,
+        "Low": 0,
+        "Medium": 0
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-02T20:33:11.180Z"
+    },
+    {
+      "id": "scan-1788381173017",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "Preset Sample Payload",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Botnet": 1
+      },
+      "riskDistribution": {
+        "Critical": 1,
+        "High": 0,
+        "Low": 0,
+        "Medium": 0
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-02T20:32:53.017Z"
+    },
+    {
+      "id": "scan-1788381160368",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "Major report3.docx",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Safe": 1
+      },
+      "riskDistribution": {
+        "Low / Legitimate": 1
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-02T20:32:40.368Z"
+    },
+    {
+      "id": "scan-1788381128364",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "Dear Mr.pdf",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Fake Legal Notice Fraud": 1
+      },
+      "riskDistribution": {
+        "High Risk Threat": 1
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-02T20:32:08.364Z"
+    },
+    {
+      "id": "scan-1788380980901",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "Presentation1 (1).pdf",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Safe": 1
+      },
+      "riskDistribution": {
+        "Low / Legitimate": 1
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-02T20:29:40.901Z"
+    },
+    {
+      "id": "scan-1788380956834",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "Fee-Receipt.pdf",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Safe": 1
+      },
+      "riskDistribution": {
+        "Low / Legitimate": 1
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-02T20:29:16.834Z"
+    },
+    {
+      "id": "scan-1788380934820",
+      "userId": "guest-analyst",
+      "type": "Intrusion Detection",
+      "filename": "test_legal_notice.pdf",
+      "totalRecords": 0,
+      "normalRecords": 0,
+      "maliciousRecords": 0,
+      "attackDistribution": {
+        "Fake Legal Notice Fraud": 1
+      },
+      "riskDistribution": {
+        "Critical Threat Alert": 1
+      },
+      "mainAttackCategory": "Normal",
+      "overallRisk": "Low",
+      "averageConfidence": 0,
+      "timestamp": "2026-09-02T20:28:54.820Z"
+    },
+    {
       "id": "scan-1788283833839",
       "userId": "demo-analyst",
       "type": "Intrusion Detection",

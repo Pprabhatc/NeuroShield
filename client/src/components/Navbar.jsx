@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation, useNavigate, Link } from 'react-router-dom';
-import { Shield, Activity, Terminal, UserCheck, Menu, X, ChevronRight, LogIn, BarChart2, History, Cpu } from 'lucide-react';
+import { Shield, Activity, Terminal, UserCheck, Menu, X, ChevronRight, LogIn, BarChart2, History, Cpu, MessageSquare } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 
@@ -30,6 +30,7 @@ export const Navbar = ({ onOpenAuth }) => {
 
   const navLinks = [
     { path: '/', label: 'Home', icon: Shield },
+    { path: '/scam-detector', label: 'SMS & Text Detector', icon: MessageSquare },
     { path: '/dashboard', label: 'Dashboard', icon: Activity },
     { path: '/intrusion', label: 'Intrusion Detection', icon: Terminal },
     { path: '/history', label: 'Detection History', icon: History },

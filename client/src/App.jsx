@@ -8,6 +8,7 @@ import { NetworkIntrusion } from './pages/NetworkIntrusion';
 import { DetectionHistory } from './pages/DetectionHistory';
 import { ModelPerformance } from './pages/ModelPerformance';
 import { Profile } from './pages/Profile';
+import { ScamDetector } from './pages/ScamDetector';
 import { Auth } from './pages/Auth';
 
 export const App = () => {
@@ -23,6 +24,7 @@ export const App = () => {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <Routes>
           <Route path="/" element={<LandingPage onOpenAuth={() => setAuthModalOpen(true)} />} />
+          <Route path="/scam-detector" element={<ScamDetector />} />
           <Route path="/dashboard" element={<Dashboard onOpenAuth={() => setAuthModalOpen(true)} />} />
           <Route path="/intrusion" element={<NetworkIntrusion onOpenAuth={() => setAuthModalOpen(true)} />} />
           <Route path="/history" element={<DetectionHistory />} />
